@@ -1,0 +1,51 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --color-cream-bg: #FAF7F2;
+  --color-cream-surface: #FFFFFF;
+  --color-cream-card: #F5EFEB;
+  --color-cream-border: #E8E0D7;
+  --color-purple-deep: #2E1065;
+  --color-purple-dark: #3B0764;
+  --color-purple-primary: #581C87;
+  --color-purple-medium: #7E22CE;
+  --color-lavender-soft: #EDE9FE;
+  --color-lavender-light: #F3E8FF;
+  --color-lavender-border: #DDD6FE;
+  --color-lavender-accent: #A855F7;
+}
+
+.dark {
+  --color-cream-bg: #140B24;
+  --color-cream-surface: #1E1235;
+  --color-cream-card: #281747;
+  --color-cream-border: #3D2668;
+  --color-purple-deep: #0D051A;
+  --color-purple-dark: #190B30;
+  --color-purple-primary: #9333EA;
+  --color-purple-medium: #A855F7;
+  --color-lavender-soft: #2D1B50;
+  --color-lavender-light: #371E63;
+  --color-lavender-border: #4C288A;
+  --color-lavender-accent: #C084FC;
+}
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--color-cream-bg);
+    color: #1F1235;
+  }
+
+  .dark body {
+    color: #F5F3FF;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
