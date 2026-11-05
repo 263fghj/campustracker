@@ -1,0 +1,91 @@
+name: Build & Publish Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+      - 'admin-v*'
+      - 'student-v*'
+      - 'driver-v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Type Check & Lint
+        run: npm run lint
+
+      - name: Build All 3 Applications (Admin, Student, Driver)
+        run: npm run build
+
+      - name: Package Release Distribution
+        run: |
+          cd dist
+          zip -r ../campustrack-transit-suite-release.zip .
+          cd ..
+
+      - name: Generate Changelog & Release Notes
+        id: notes
+        run: |
+          cat << 'EOF' > release_notes.md
+          # 🚎 Aditya University CampusTrack - Transit Fleet Suite
+
+          This release packages all three dedicated transit applications into a single synchronized build:
+
+          ### 🌐 1. Admin Operations Website
+          - **URL Path**: `/#admin`
+          - Real-Time SVG Vector Fleet Map with Live Bus Markers
+          - Schedule Deviation & Delay Tracker (`+6m Delay`, `On Time`)
+          - Route & Waypoint Stop Creation & Management
+          - Driver & Student Bus Allocation & Unassignment
+          - Student Digital QR Pass Directory & Verification Table
+          - Fleet Telemetry Drawer with GPS Speed & Engine Status
+
+          ### 📱 2. Student Commuter Mobile App
+          - **URL Path**: `/#student`
+          - Live GPS Bus ETA Countdown Timer ("Arriving in 3 min")
+          - Pickup Stop Timeline with Proximity Radar
+          - Digital Holographic QR Bus Pass with Validity & Security Watermark
+          - Direct Driver Phone Contact & Rating Card
+          - Switchable between Smartphone Bezel Frame & Responsive Mobile Web
+
+          ### 🚎 3. Driver In-Cab Console HUD
+          - **URL Path**: `/#driver`
+          - In-Cab Cockpit Tablet Mount Terminal HUD
+          - Live Speedometer with 45 km/h Campus Speed Governor Warning
+          - Large Tactile "Mark Arrived at Stop" Action Button
+          - One-Tap Passenger Counter (`+` / `-` Boarding)
+          - Optical Camera QR Barcode Scanner Simulator
+          - One-Tap SOS Emergency Beacon & Traffic Delay Reporter
+
+          ---
+          ### 📦 Deployment & Assets
+          - **`campustrack-transit-suite-release.zip`**: Production bundle ready to host on GitHub Pages, Cloud Run, Vercel, Netlify, or any static web server.
+          EOF
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          body_path: release_notes.md
+          files: |
+            campustrack-transit-suite-release.zip
+          draft: false
+          prerelease: false
